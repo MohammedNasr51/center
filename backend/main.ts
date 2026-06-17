@@ -5,10 +5,6 @@ import { MongoClient, ObjectId } from "npm:mongodb@6.17.0";
 const MONGODB_URI = Deno.env.get("MONGODB_URI") || "";
 const MONGODB_DB = Deno.env.get("MONGODB_DB") || "vision_center";
 const PORT = Number(Deno.env.get("PORT") || 8000);
-const ALLOWED_ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") || "*")
-  .split(",")
-  .map((x) => x.trim())
-  .filter(Boolean);
 
 const allowedCollections = new Set([
   "students",
@@ -69,11 +65,7 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin: (origin) => {
-      if (!origin) return "*";
-      if (ALLOWED_ORIGINS.includes("*")) return origin;
-      return ALLOWED_ORIGINS.includes(origin) ? origin : undefined;
-    },
+    origin: "*",
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
@@ -118,16 +110,14 @@ app.put("/api/state", async (c) => {
   if (!body.state || typeof body.state !== "object")
     return jsonError(c, "state object is required");
   const now = new Date();
-  await db
-    .collection("app_state")
-    .updateOne(
-      { centerId },
-      {
-        $set: { centerId, state: body.state, updatedAt: now },
-        $setOnInsert: { createdAt: now },
-      },
-      { upsert: true },
-    );
+  await db.collection("app_state").updateOne(
+    { centerId },
+    {
+      $set: { centerId, state: body.state, updatedAt: now },
+      $setOnInsert: { createdAt: now },
+    },
+    { upsert: true },
+  );
   return c.json({ ok: true, centerId, updatedAt: now.toISOString() });
 });
 
@@ -174,15 +164,13 @@ app.post("/api/:collection", async (c) => {
   const centerId = String(body.centerId || "vision-main").trim();
   const payload = cleanRecord(body.record || body);
   const now = new Date();
-  const result = await db
-    .collection("records")
-    .insertOne({
-      centerId,
-      type: collection,
-      payload,
-      createdAt: now,
-      updatedAt: now,
-    });
+  const result = await db.collection("records").insertOne({
+    centerId,
+    type: collection,
+    payload,
+    createdAt: now,
+    updatedAt: now,
+  });
   return c.json(
     {
       ok: true,
