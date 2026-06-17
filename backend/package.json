@@ -4,8 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "deno task check",
     "dev": "deno task dev",
     "start": "deno task start",
     "check": "deno task check"
+  },
+  "dependencies": {
+    "hono": "4.8.3",
+    "mongodb": "6.17.0"
   }
 }
