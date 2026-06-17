@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-net --allow-env --env-file=.env main.ts",
+    "start": "deno run --allow-net --allow-env main.ts",
+    "check": "deno check main.ts"
+  },
+  "imports": {}
+}

@@ -1,0 +1,11 @@
+{
+  "name": "vision-center-backend-deno",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "deno task dev",
+    "start": "deno task start",
+    "check": "deno task check"
+  }
+}

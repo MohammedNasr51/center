@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>نظام إدارة السنتر التعليمي</title>
+  <style>
+:root {
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --surface-2: #f7fafc;
+  --text: #162033;
+  --muted: #6b7280;
+  --border: #dde5ef;
+  --primary: #153b64;
+  --primary-2: #0d2a49;
+  --accent: #6d8bb5;
+  --good: #168a54;
+  --warn: #d28a00;
+  --danger: #c83c3c;
+  --shadow: 0 14px 40px rgba(13, 42, 73, 0.08);
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+button, input, select, textarea { font-family: inherit; }
+button { cursor: pointer; }
+
+.app-shell { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 290px;
+  background: linear-gradient(180deg, var(--primary-2), var(--primary));
+  color: white;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+}
+.brand { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.16); }
+.brand-logo {
+  width: 48px; height: 48px; border-radius: 16px;
+  background: rgba(255,255,255,.16);
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 24px;
+  border: 1px solid rgba(255,255,255,.25);
+}
+.brand h1 { margin: 0; font-size: 20px; }
+.brand p { margin: 3px 0 0; color: rgba(255,255,255,.72); font-size: 13px; }
+#nav { display: grid; gap: 8px; }
+.nav-btn {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; border: 0; border-radius: 14px;
+  color: rgba(255,255,255,.85);
+  background: transparent;
+  padding: 11px 12px;
+  text-align: right;
+  transition: .18s ease;
+}
+.nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,.14); color: white; }
+.nav-btn span:first-child { width: 24px; text-align: center; }
+.sidebar-footer { margin-top: auto; display: grid; gap: 10px; }
+
+.main { flex: 1; min-width: 0; padding: 24px; }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  background: rgba(255,255,255,.84);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  backdrop-filter: blur(8px);
+  position: sticky; top: 16px; z-index: 10;
+}
+.topbar h2 { margin: 0; font-size: 24px; }
+.topbar p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.menu-btn { display: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; }
+
+.primary, .secondary, .ghost, .danger-btn, .success-btn {
+  border: 0; border-radius: 13px; padding: 11px 15px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.primary { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(21,59,100,.16); }
+.primary:hover { background: var(--primary-2); }
+.secondary { background: #eef3f9; color: var(--primary); border: 1px solid var(--border); }
+.ghost { background: rgba(255,255,255,.10); color: white; border: 1px solid rgba(255,255,255,.18); }
+.danger-btn { background: #fff0f0; color: var(--danger); border: 1px solid #ffd6d6; }
+.success-btn { background: #eaf8f1; color: var(--good); border: 1px solid #c9efdb; }
+.full { width: 100%; }
+.file-label input { display: none; }
+.icon-btn { background: transparent; border: 0; font-size: 28px; line-height: 1; color: var(--muted); }
+
+.content { margin-top: 22px; display: grid; gap: 18px; }
+.alerts { margin-top: 14px; display: grid; gap: 10px; }
+.alert { background: #fff8e8; color: #674a00; border: 1px solid #ffe1a1; border-radius: 14px; padding: 11px 14px; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, minmax(180px, 1fr)); gap: 14px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px; box-shadow: var(--shadow);
+}
+.stat-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.stat-icon { width: 48px; height: 48px; border-radius: 16px; background: #eef3f9; display: grid; place-items: center; font-size: 22px; }
+.stat-card p { margin: 0; color: var(--muted); font-size: 13px; }
+.stat-card h3 { margin: 5px 0 0; font-size: 26px; }
+
+.two-col { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; }
+.section-title { display:flex; align-items:center; justify-content:space-between; gap: 10px; margin-bottom: 12px; }
+.section-title h3 { margin: 0; font-size: 18px; }
+.section-title p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+
+.toolbar {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow);
+}
+.toolbar .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.search-input, .filter-select {
+  border: 1px solid var(--border); background: var(--surface-2); border-radius: 12px;
+  padding: 11px 13px; min-width: 220px; color: var(--text);
+}
+.filter-select { min-width: 170px; }
+
+.table-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.table-wrap { overflow: auto; max-height: calc(100vh - 250px); }
+table { width: 100%; border-collapse: collapse; min-width: 980px; }
+th, td { padding: 12px 13px; border-bottom: 1px solid var(--border); text-align: right; vertical-align: top; }
+th { background: #f0f5fb; color: #274565; font-size: 13px; position: sticky; top: 0; z-index: 1; }
+td { font-size: 14px; }
+tr:hover td { background: #fbfdff; }
+.cell-muted { color: var(--muted); font-size: 12px; }
+.actions-cell { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.mini-btn { border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); padding: 7px 9px; color: var(--primary); font-weight: 700; }
+.mini-danger { color: var(--danger); background: #fff5f5; border-color: #ffd9d9; }
+.badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 5px 10px; background: #eef3f9; color: var(--primary); font-size: 12px; font-weight: 800; }
+.badge.good { background:#eaf8f1; color:var(--good); }
+.badge.warn { background:#fff6dc; color:#9b6700; }
+.badge.danger { background:#fff0f0; color:var(--danger); }
+
+.dialog { border: none; padding: 0; background: transparent; width: min(940px, 94vw); }
+.dialog::backdrop { background: rgba(10,25,45,.46); backdrop-filter: blur(4px); }
+.dialog-card { background: white; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.2); padding: 22px; max-height: 90vh; overflow: auto; }
+.dialog-card.wide { width: min(1100px, 94vw); }
+.dialog-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; }
+.dialog-header h3 { margin: 0; font-size: 22px; }
+.dialog-header p { margin: 4px 0 0; color: var(--muted); }
+.form-grid { display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 14px; }
+.form-field { display: grid; gap: 7px; }
+.form-field label { font-weight: 800; font-size: 13px; color: #31465e; }
+.form-field input, .form-field select, .form-field textarea {
+  border: 1px solid var(--border); border-radius: 13px; padding: 12px; background: #fbfdff; color: var(--text); width: 100%;
+}
+.form-field textarea { min-height: 96px; resize: vertical; }
+.form-field.full-field { grid-column: 1 / -1; }
+.dialog-actions { display: flex; justify-content: flex-start; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+.settings-grid { display: grid; grid-template-columns: repeat(2, minmax(250px, 1fr)); gap: 14px; }
+.setting-box { display: grid; gap: 7px; }
+.setting-box label { font-weight: 800; }
+.setting-box textarea, .setting-box input { border: 1px solid var(--border); border-radius: 13px; padding: 12px; background: #fbfdff; min-height: 120px; }
+.setting-box input { min-height: auto; }
+
+.empty { background: var(--surface); border: 1px dashed #c8d4e2; border-radius: var(--radius); padding: 48px 20px; text-align: center; color: var(--muted); }
+.empty-icon { font-size: 40px; }
+.empty h3 { color: var(--text); margin: 12px 0 6px; }
+
+.quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.list { display: grid; gap: 10px; }
+.list-item { display: flex; justify-content: space-between; align-items:center; gap: 12px; border:1px solid var(--border); border-radius: 14px; padding: 12px; background: var(--surface-2); }
+.list-item strong { display:block; }
+.list-item small { color: var(--muted); }
+
+@media (max-width: 1100px) {
+  .stats-grid, .report-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+  .two-col { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+}
+@media (max-width: 820px) {
+  .sidebar { position: fixed; right: -310px; z-index: 30; transition: .2s ease; }
+  .sidebar.open { right: 0; }
+  .main { padding: 14px; }
+  .topbar { top: 8px; align-items: flex-start; }
+  .menu-btn { display: inline-flex; }
+  .top-actions { flex-wrap: wrap; justify-content: flex-end; }
+  .stats-grid, .report-grid, .quick-actions { grid-template-columns: 1fr; }
+  .form-grid, .settings-grid { grid-template-columns: 1fr; }
+  .search-input, .filter-select { min-width: 100%; }
+}
+@media print {
+  .sidebar, .top-actions, .menu-btn, .toolbar button, .actions-cell { display: none !important; }
+  .main { padding: 0; }
+  .topbar, .card, .table-card, .toolbar { box-shadow: none; border-color: #bbb; }
+  .table-wrap { max-height: none; overflow: visible; }
+}
+
+.sync-status { font-size: 12px; color: rgba(255,255,255,.80); background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.16); border-radius: 12px; padding: 9px 10px; text-align: center; }
+.sync-status.good { color: #d7ffe9; }
+.sync-status.warn { color: #ffecc2; }
+.sync-status.danger { color: #ffd6d6; }
+.setting-box input[type="file"] { padding: 10px; background: var(--surface-2); }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-logo" id="brandLogo">س</div>
+        <div>
+          <h1 id="centerNameSide">سنتر تعليمي</h1>
+          <p>نظام إدارة كامل</p>
+        </div>
+      </div>
+      <nav id="nav"></nav>
+      <div class="sidebar-footer">
+        <div class="sync-status" id="syncStatus">وضع محلي</div>
+        <button class="ghost full" id="exportAllBtn">تصدير نسخة احتياطية</button>
+        <label class="ghost full file-label">
+          استيراد نسخة
+          <input type="file" id="importFile" accept="application/json" hidden />
+        </label>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div>
+          <h2 id="pageTitle">لوحة التحكم</h2>
+          <p id="pageSubtitle">ملخص سريع لحالة السنتر اليوم</p>
+        </div>
+        <div class="top-actions">
+          <button class="secondary" id="printBtn">طباعة</button>
+          <button class="primary" id="addNewBtn">+ إضافة</button>
+        </div>
+      </header>
+
+      <section id="alerts" class="alerts"></section>
+      <section id="content" class="content"></section>
+    </main>
+  </div>
+
+  <dialog id="recordDialog" class="dialog">
+    <form method="dialog" class="dialog-card" id="recordForm">
+      <div class="dialog-header">
+        <div>
+          <h3 id="dialogTitle">إضافة بيانات</h3>
+          <p id="dialogHint">املأ البيانات المطلوبة ثم اضغط حفظ</p>
+        </div>
+        <button type="button" class="icon-btn" id="closeDialogBtn">×</button>
+      </div>
+      <div id="formFields" class="form-grid"></div>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="cancelBtn">إلغاء</button>
+        <button type="submit" class="primary">حفظ</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog" class="dialog">
+    <form method="dialog" class="dialog-card wide" id="settingsForm">
+      <div class="dialog-header">
+        <div>
+          <h3>إعدادات القوائم والسنتر</h3>
+          <p>اكتب كل عنصر في سطر منفصل للقوائم المستخدمة في الفورمات.</p>
+        </div>
+        <button type="button" class="icon-btn" id="closeSettingsBtn">×</button>
+      </div>
+      <div id="settingsFields" class="settings-grid"></div>
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="resetDemoBtn">مسح كل البيانات</button>
+        <button type="submit" class="primary">حفظ الإعدادات</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="emptyTemplate">
+    <div class="empty">
+      <div class="empty-icon">📋</div>
+      <h3>لا توجد بيانات بعد</h3>
+      <p>اضغط على زر إضافة وابدأ إدخال البيانات بسهولة.</p>
+    </div>
+  </template>
+
+  <script type="module">
+const STORAGE_KEY = "center-management-webapp-v1";
+const ENV_API_BASE_URL = (import.meta.env?.VITE_API_BASE_URL || "").trim();
+const ENV_CENTER_ID = (import.meta.env?.VITE_CENTER_ID || "vision-main").trim();
+let remoteSaveTimer = null;
+let remoteReady = false;
+
+const defaultSettings = {
+  centerName: "فيجين التحصيل",
+  centerPhone: "",
+  centerId: "vision-main",
+  apiBaseUrl: "",
+  sidebarIcon: "🎯",
+  grades: ["الأول الابتدائي", "الثاني الابتدائي", "الثالث الابتدائي", "الرابع الابتدائي", "الخامس الابتدائي", "السادس الابتدائي", "الأول الإعدادي", "الثاني الإعدادي", "الثالث الإعدادي", "الأول الثانوي", "الثاني الثانوي", "الثالث الثانوي"],
+  subjects: ["لغة عربية", "لغة إنجليزية", "رياضيات", "علوم", "أحياء", "كيمياء", "فيزياء", "دراسات", "تاريخ", "جغرافيا", "فلسفة", "علم نفس"],
+  studentStatuses: ["مستمر", "جديد", "منقطع", "متوقف مؤقتًا"],
+  attendanceStatuses: ["حاضر", "غائب", "متأخر", "اعتذار"],
+  paymentMethods: ["كاش", "فودافون كاش", "إنستا باي", "تحويل بنكي"],
+  groupStatuses: ["متاحة", "قاربت على الاكتمال", "مكتملة"],
+  teacherPaySystems: ["مبلغ ثابت", "نسبة من الاشتراك", "مبلغ لكل طالب", "مبلغ لكل حصة"],
+  roles: ["مدير", "استقبال", "مدرس", "حسابات"],
+  sources: ["فيسبوك", "واتساب", "ترشيح", "إعلان", "طالب قديم", "زيارة للسنتر"],
+  leadStatuses: ["تم التواصل", "لم يرد", "حجز تجربة", "حضر تجربة", "سجل فعليًا", "غير مهتم"],
+  complaintStatuses: ["مفتوحة", "تحت المتابعة", "تم الحل"],
+  homeworkStatuses: ["سلم", "لم يسلم", "ناقص", "ممتاز"],
+  expenseCategories: ["إيجار", "كهرباء", "مياه", "إنترنت", "مرتبات", "دعاية وإعلانات", "أدوات مكتبية", "صيانة", "نظافة", "ضيافة", "أخرى"],
+  roomStatuses: ["متاحة", "مشغولة", "صيانة"],
+  staffStatuses: ["نشط", "موقوف"]
+};
+
+const modules = {
+  dashboard: { title: "لوحة التحكم", subtitle: "ملخص سريع لحالة السنتر اليوم", icon: "📊" },
+  students: { title: "الطلاب", subtitle: "ملفات الطلاب الأساسية والاشتراكات", icon: "🎓", prefix: "STU", codeField: "code" },
+  attendance: { title: "الحضور والغياب", subtitle: "تسجيل حضور كل حصة ورسائل الغياب", icon: "✅" },
+  payments: { title: "المدفوعات", subtitle: "الاشتراكات والإيصالات والمتأخرات", icon: "💳", prefix: "REC", codeField: "receiptNo" },
+  groups: { title: "المجموعات", subtitle: "جدول المجموعات والقاعات والسعة", icon: "🗓️", prefix: "GRP", codeField: "code" },
+  teachers: { title: "المدرسين", subtitle: "بيانات المدرسين والمستحقات", icon: "👨‍🏫", prefix: "TCH", codeField: "code" },
+  exams: { title: "الامتحانات", subtitle: "درجات الطلاب وتحليل المستوى", icon: "📝" },
+  homework: { title: "الواجبات", subtitle: "متابعة تسليم الواجبات", icon: "📚" },
+  whatsapp: { title: "رسائل واتساب", subtitle: "قوالب الرسائل الجاهزة", icon: "💬" },
+  rooms: { title: "القاعات", subtitle: "إدارة القاعات والمواعيد", icon: "🏫" },
+  expenses: { title: "المصروفات", subtitle: "تسجيل مصروفات السنتر", icon: "🧾" },
+  staff: { title: "الموظفين", subtitle: "بيانات الموظفين والصلاحيات", icon: "👥", prefix: "EMP", codeField: "code" },
+  leads: { title: "الطلاب الجدد", subtitle: "متابعة العملاء المحتملين ومصادر التسجيل", icon: "📞", prefix: "LEAD", codeField: "code" },
+  complaints: { title: "الشكاوى", subtitle: "تسجيل ومتابعة الشكاوى والملاحظات", icon: "⚠️" },
+  reports: { title: "التقارير", subtitle: "تقارير مالية وتعليمية وإدارية", icon: "📈" },
+  settings: { title: "الإعدادات", subtitle: "تعديل قوائم الاختيار وبيانات السنتر", icon: "⚙️" }
+};
+
+const schemas = {
+  students: [
+    { key: "code", label: "كود الطالب", type: "auto", readonly: true },
+    { key: "name", label: "اسم الطالب", type: "text", required: true },
+    { key: "studentPhone", label: "رقم الطالب", type: "tel" },
+    { key: "parentPhone", label: "رقم ولي الأمر", type: "tel" },
+    { key: "grade", label: "الصف الدراسي", type: "select", options: () => state.settings.grades },
+    { key: "school", label: "المدرسة", type: "text" },
+    { key: "subject", label: "المادة", type: "select", options: () => state.settings.subjects },
+    { key: "teacher", label: "المدرس", type: "teacher" },
+    { key: "group", label: "المجموعة", type: "group" },
+    { key: "schedule", label: "ميعاد الحصة", type: "text", placeholder: "مثال: السبت 6 مساءً" },
+    { key: "registrationDate", label: "تاريخ التسجيل", type: "date", defaultToday: true },
+    { key: "status", label: "حالة الطالب", type: "select", options: () => state.settings.studentStatuses, default: "مستمر" },
+    { key: "subscription", label: "قيمة الاشتراك", type: "number" },
+    { key: "subscriptionType", label: "نوع الاشتراك", type: "select", options: () => ["شهري", "بالحصة", "كورس", "تجربة"] },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  attendance: [
+    { key: "date", label: "التاريخ", type: "date", required: true, defaultToday: true },
+    { key: "studentCode", label: "كود/اسم الطالب", type: "student", required: true },
+    { key: "status", label: "الحالة", type: "select", options: () => state.settings.attendanceStatuses, default: "حاضر" },
+    { key: "reason", label: "سبب الغياب/ملاحظة", type: "textarea", full: true },
+    { key: "whatsappSent", label: "واتساب مرسل؟", type: "select", options: () => ["لا", "نعم"], default: "لا" },
+    { key: "enteredBy", label: "مدخل البيانات", type: "staff" }
+  ],
+  payments: [
+    { key: "date", label: "تاريخ الدفع", type: "date", required: true, defaultToday: true },
+    { key: "studentCode", label: "كود/اسم الطالب", type: "student", required: true },
+    { key: "month", label: "شهر الاشتراك", type: "month" },
+    { key: "amountPaid", label: "المبلغ المدفوع", type: "number", required: true },
+    { key: "method", label: "طريقة الدفع", type: "select", options: () => state.settings.paymentMethods },
+    { key: "receivedBy", label: "المستلم", type: "staff" },
+    { key: "receiptNo", label: "رقم الإيصال", type: "auto", readonly: true },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  groups: [
+    { key: "code", label: "كود المجموعة", type: "auto", readonly: true },
+    { key: "name", label: "اسم المجموعة", type: "text", required: true },
+    { key: "grade", label: "الصف", type: "select", options: () => state.settings.grades },
+    { key: "subject", label: "المادة", type: "select", options: () => state.settings.subjects },
+    { key: "teacher", label: "المدرس", type: "teacher" },
+    { key: "day", label: "اليوم", type: "select", options: () => ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"] },
+    { key: "time", label: "الساعة", type: "time" },
+    { key: "room", label: "القاعة", type: "room" },
+    { key: "capacity", label: "السعة القصوى", type: "number" },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  teachers: [
+    { key: "code", label: "كود المدرس", type: "auto", readonly: true },
+    { key: "name", label: "اسم المدرس", type: "text", required: true },
+    { key: "phone", label: "رقم الهاتف", type: "tel" },
+    { key: "subject", label: "المادة", type: "select", options: () => state.settings.subjects },
+    { key: "grades", label: "الصفوف", type: "text", placeholder: "مثال: أولى وثانية وثالثة ثانوي" },
+    { key: "paySystem", label: "نظام الحساب", type: "select", options: () => state.settings.teacherPaySystems },
+    { key: "payValue", label: "النسبة/الأجر", type: "number" },
+    { key: "paid", label: "المدفوع للمدرس", type: "number" },
+    { key: "rating", label: "تقييم الأداء", type: "select", options: () => ["ممتاز", "جيد", "يحتاج متابعة"] },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  exams: [
+    { key: "date", label: "التاريخ", type: "date", required: true, defaultToday: true },
+    { key: "examName", label: "اسم الامتحان", type: "text", required: true },
+    { key: "studentCode", label: "كود/اسم الطالب", type: "student", required: true },
+    { key: "fullMark", label: "الدرجة النهائية", type: "number", required: true },
+    { key: "studentMark", label: "درجة الطالب", type: "number", required: true },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  homework: [
+    { key: "date", label: "تاريخ الواجب", type: "date", defaultToday: true },
+    { key: "dueDate", label: "تاريخ التسليم", type: "date" },
+    { key: "studentCode", label: "كود/اسم الطالب", type: "student", required: true },
+    { key: "description", label: "وصف الواجب", type: "textarea", full: true },
+    { key: "status", label: "الحالة", type: "select", options: () => state.settings.homeworkStatuses, default: "سلم" },
+    { key: "score", label: "الدرجة/التقييم", type: "text" },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  whatsapp: [
+    { key: "type", label: "نوع الرسالة", type: "text", required: true },
+    { key: "template", label: "قالب الرسالة", type: "textarea", full: true, required: true },
+    { key: "variables", label: "المتغيرات المقترحة", type: "text" },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  rooms: [
+    { key: "name", label: "اسم القاعة", type: "text", required: true },
+    { key: "floor", label: "الدور", type: "text" },
+    { key: "chairs", label: "عدد الكراسي", type: "number" },
+    { key: "status", label: "الحالة", type: "select", options: () => state.settings.roomStatuses, default: "متاحة" },
+    { key: "busyTimes", label: "المواعيد المشغولة", type: "textarea", full: true },
+    { key: "lastMaintenance", label: "آخر صيانة", type: "date" },
+    { key: "manager", label: "المسؤول", type: "staff" },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  expenses: [
+    { key: "date", label: "التاريخ", type: "date", defaultToday: true, required: true },
+    { key: "category", label: "بند المصروف", type: "select", options: () => state.settings.expenseCategories },
+    { key: "description", label: "الوصف", type: "text" },
+    { key: "amount", label: "المبلغ", type: "number", required: true },
+    { key: "method", label: "طريقة الدفع", type: "select", options: () => state.settings.paymentMethods },
+    { key: "responsible", label: "المسؤول", type: "staff" },
+    { key: "invoiceNo", label: "رقم الفاتورة", type: "text" },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  staff: [
+    { key: "code", label: "كود الموظف", type: "auto", readonly: true },
+    { key: "name", label: "اسم الموظف", type: "text", required: true },
+    { key: "job", label: "الوظيفة", type: "text" },
+    { key: "phone", label: "الهاتف", type: "tel" },
+    { key: "role", label: "الصلاحية", type: "select", options: () => state.settings.roles },
+    { key: "status", label: "الحالة", type: "select", options: () => state.settings.staffStatuses, default: "نشط" },
+    { key: "username", label: "اسم المستخدم", type: "text" },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  leads: [
+    { key: "code", label: "كود المتابعة", type: "auto", readonly: true },
+    { key: "name", label: "اسم الطالب", type: "text", required: true },
+    { key: "parentPhone", label: "رقم ولي الأمر", type: "tel" },
+    { key: "grade", label: "الصف", type: "select", options: () => state.settings.grades },
+    { key: "subject", label: "المادة المطلوبة", type: "select", options: () => state.settings.subjects },
+    { key: "source", label: "مصدر المعرفة", type: "select", options: () => state.settings.sources },
+    { key: "contactDate", label: "تاريخ التواصل", type: "date", defaultToday: true },
+    { key: "status", label: "حالة المتابعة", type: "select", options: () => state.settings.leadStatuses, default: "تم التواصل" },
+    { key: "lastAction", label: "آخر إجراء", type: "textarea", full: true },
+    { key: "nextFollowDate", label: "تاريخ المتابعة القادم", type: "date" },
+    { key: "owner", label: "مسؤول المتابعة", type: "staff" },
+    { key: "converted", label: "تحول لطالب فعلي؟", type: "select", options: () => ["لا", "نعم"], default: "لا" },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ],
+  complaints: [
+    { key: "date", label: "التاريخ", type: "date", defaultToday: true, required: true },
+    { key: "studentCode", label: "كود/اسم الطالب", type: "student" },
+    { key: "type", label: "نوع الشكوى", type: "select", options: () => ["مدرس", "مواعيد", "دفع", "قاعة", "إدارة", "أخرى"] },
+    { key: "details", label: "تفاصيل الشكوى", type: "textarea", full: true, required: true },
+    { key: "responsible", label: "المسؤول عن الحل", type: "staff" },
+    { key: "status", label: "حالة الشكوى", type: "select", options: () => state.settings.complaintStatuses, default: "مفتوحة" },
+    { key: "solutionDate", label: "تاريخ الحل", type: "date" },
+    { key: "action", label: "الإجراء المتخذ", type: "textarea", full: true },
+    { key: "notes", label: "ملاحظات", type: "textarea", full: true }
+  ]
+};
+
+const tableColumns = {
+  students: ["code", "name", "parentPhone", "grade", "subject", "teacher", "group", "schedule", "status", "subscription"],
+  attendance: ["date", "studentCode", "studentName", "subject", "teacher", "group", "status", "message"],
+  payments: ["date", "receiptNo", "studentCode", "studentName", "subject", "subscription", "amountPaid", "remaining", "paymentStatus", "method", "message"],
+  groups: ["code", "name", "grade", "subject", "teacher", "day", "time", "room", "capacity", "currentStudents", "fillRate", "groupStatus"],
+  teachers: ["code", "name", "phone", "subject", "groupsCount", "studentsCount", "collected", "teacherDue", "paid", "remainingDue", "rating"],
+  exams: ["date", "examName", "studentCode", "studentName", "subject", "fullMark", "studentMark", "percentage", "level", "message"],
+  homework: ["date", "dueDate", "studentCode", "studentName", "subject", "description", "status", "score", "message"],
+  whatsapp: ["type", "template", "variables", "notes"],
+  rooms: ["name", "floor", "chairs", "status", "busyTimes", "lastMaintenance", "manager"],
+  expenses: ["date", "category", "description", "amount", "method", "responsible", "invoiceNo"],
+  staff: ["code", "name", "job", "phone", "role", "status", "username"],
+  leads: ["code", "name", "parentPhone", "grade", "subject", "source", "contactDate", "status", "nextFollowDate", "owner", "converted"],
+  complaints: ["date", "studentCode", "studentName", "parentPhone", "type", "status", "responsible", "solutionDate", "details"]
+};
+
+const labels = Object.fromEntries(Object.values(schemas).flat().map(f => [f.key, f.label]));
+Object.assign(labels, {
+  studentName: "اسم الطالب",
+  subscription: "قيمة الاشتراك",
+  remaining: "المتبقي",
+  paymentStatus: "حالة الدفع",
+  message: "رسالة جاهزة",
+  currentStudents: "عدد الطلاب",
+  fillRate: "نسبة الامتلاء",
+  groupStatus: "حالة المجموعة",
+  groupsCount: "عدد المجموعات",
+  studentsCount: "عدد الطلاب",
+  collected: "تحصيل الطلاب",
+  teacherDue: "مستحق المدرس",
+  remainingDue: "المتبقي للمدرس",
+  percentage: "النسبة",
+  level: "المستوى",
+  parentPhone: "رقم ولي الأمر"
+});
+
+const initialWhatsappTemplates = [
+  { type: "تسجيل طالب جديد", template: "تم تسجيل الطالب / {اسم الطالب} بنجاح في مادة {المادة}. المجموعة: {المجموعة}. الموعد: {الموعد}. نتمنى له التوفيق.", variables: "اسم الطالب - المادة - المجموعة - الموعد", notes: "انسخ القالب وعدل المتغيرات" },
+  { type: "غياب", template: "ولي أمر الطالب / {اسم الطالب} نحيط علم سيادتكم بأن الطالب لم يحضر حصة اليوم لمادة {المادة} بتاريخ {التاريخ}. برجاء المتابعة.", variables: "اسم الطالب - المادة - التاريخ", notes: "" },
+  { type: "تأخير دفع", template: "ولي أمر الطالب / {اسم الطالب} نحيط علم سيادتكم بأن اشتراك شهر {الشهر} لمادة {المادة} لم يتم سداده حتى الآن. برجاء السداد في أقرب وقت.", variables: "اسم الطالب - الشهر - المادة", notes: "" },
+  { type: "نتيجة امتحان", template: "ولي أمر الطالب / {اسم الطالب} درجة الطالب في امتحان {اسم الامتحان} لمادة {المادة} هي {الدرجة} من {النهاية}. المستوى: {المستوى}.", variables: "اسم الطالب - اسم الامتحان - المادة - الدرجة - النهاية - المستوى", notes: "" },
+  { type: "عدم تسليم واجب", template: "ولي أمر الطالب / {اسم الطالب} نحيط علم سيادتكم بأن الطالب لم يسلم واجب مادة {المادة}. برجاء المتابعة.", variables: "اسم الطالب - المادة", notes: "" }
+];
+
+let state = loadState();
+let currentModule = "dashboard";
+let editing = { module: null, id: null };
+let currentSearch = "";
+let currentFilter = "";
+
+function freshState() {
+  return {
+    settings: JSON.parse(JSON.stringify(defaultSettings)),
+    students: [], attendance: [], payments: [], groups: [], teachers: [], exams: [], homework: [], whatsapp: initialWhatsappTemplates,
+    rooms: [], expenses: [], staff: [], leads: [], complaints: []
+  };
+}
+
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return freshState();
+  try {
+    const parsed = JSON.parse(raw);
+    const base = freshState();
+    return { ...base, ...parsed, settings: { ...base.settings, ...(parsed.settings || {}) } };
+  } catch (error) {
+    console.warn(error);
+    return freshState();
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  document.getElementById("centerNameSide").textContent = state.settings.centerName || "سنتر تعليمي";
+  renderSidebarIcon();
+  scheduleRemoteSave();
+}
+
+function getApiBaseUrl() {
+  return String(state?.settings?.apiBaseUrl || localStorage.getItem("centerApiBaseUrl") || ENV_API_BASE_URL || "").trim().replace(/\/$/, "");
+}
+
+function getCenterId() {
+  return String(state?.settings?.centerId || localStorage.getItem("centerId") || ENV_CENTER_ID || "vision-main").trim();
+}
+
+function hasRemoteApi() {
+  const url = getApiBaseUrl();
+  return Boolean(url && !url.includes("VITE_API_BASE_URL"));
+}
+
+function setSyncStatus(text, kind = "") {
+  const el = document.getElementById("syncStatus");
+  if (!el) return;
+  el.textContent = text;
+  el.className = `sync-status ${kind}`;
+}
+
+function apiPath(path) {
+  return `${getApiBaseUrl()}${path}`;
+}
+
+function renderSidebarIcon() {
+  const el = document.getElementById("brandLogo");
+  if (!el) return;
+  const icon = String(state?.settings?.sidebarIcon || "🎯").trim();
+  if (/^(https?:\/\/|data:image\/)/i.test(icon)) {
+    el.innerHTML = `<img src="${escapeHtml(icon)}" alt="${escapeHtml(state.settings.centerName || "logo")}" />`;
+  } else {
+    el.textContent = icon || "🎯";
+  }
+}
+
+async function loadRemoteState() {
+  if (!hasRemoteApi()) {
+    setSyncStatus("وضع محلي");
+    return;
+  }
+  try {
+    setSyncStatus("جاري الاتصال بالسيرفر...", "warn");
+    const res = await fetch(apiPath(`/api/state?centerId=${encodeURIComponent(getCenterId())}`));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data?.state) {
+      state = { ...freshState(), ...data.state, settings: { ...defaultSettings, ...(data.state.settings || {}) } };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+    setSyncStatus("متصل بقاعدة البيانات", "good");
+  } catch (error) {
+    console.warn(error);
+    setSyncStatus("السيرفر غير متاح - حفظ محلي", "danger");
+  }
+}
+
+function scheduleRemoteSave() {
+  if (!remoteReady || !hasRemoteApi()) return;
+  clearTimeout(remoteSaveTimer);
+  remoteSaveTimer = setTimeout(saveRemoteState, 650);
+}
+
+async function saveRemoteState() {
+  if (!hasRemoteApi()) return;
+  try {
+    setSyncStatus("جاري حفظ البيانات...", "warn");
+    const res = await fetch(apiPath("/api/state"), {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ centerId: getCenterId(), state })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    setSyncStatus("محفوظ أونلاين", "good");
+  } catch (error) {
+    console.warn(error);
+    setSyncStatus("فشل الحفظ أونلاين - محفوظ محليًا", "danger");
+  }
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function ymNow() {
+  return new Date().toISOString().slice(0, 7);
+}
+
+function money(n) {
+  const num = Number(n || 0);
+  return num.toLocaleString("ar-EG", { maximumFractionDigits: 2 });
+}
+
+function pct(n) {
+  const num = Number(n || 0);
+  return `${Math.round(num * 100)}%`;
+}
+
+function uid() {
+  return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function generateCode(moduleKey) {
+  const m = modules[moduleKey];
+  if (!m?.prefix) return "";
+  const count = (state[moduleKey] || []).length + 1;
+  return `${m.prefix}-${String(count).padStart(4, "0")}`;
+}
+
+function getStudent(code) {
+  return state.students.find(s => s.code === code || s.id === code);
+}
+
+function findByName(list, value) {
+  return list.find(x => x.name === value || x.code === value || x.id === value);
+}
+
+function studentDisplay(code) {
+  const s = getStudent(code);
+  return s ? `${s.name} — ${s.code}` : (code || "");
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#039;","\"":"&quot;"}[ch]));
+}
+
+function normalizeArabicDigits(value) {
+  const arabic = "٠١٢٣٤٥٦٧٨٩";
+  const eastern = "۰۱۲۳۴۵۶۷۸۹";
+  return String(value || "").replace(/[٠-٩]/g, d => arabic.indexOf(d)).replace(/[۰-۹]/g, d => eastern.indexOf(d));
+}
+
+function whatsappUrl(phone, message) {
+  let p = normalizeArabicDigits(phone).replace(/\D/g, "");
+  if (!p) return "";
+  if (p.startsWith("0")) p = `20${p.slice(1)}`;
+  if (!p.startsWith("20") && p.length === 10) p = `20${p}`;
+  return `https://wa.me/${p}?text=${encodeURIComponent(message || "")}`;
+}
+
+function monthOf(date) {
+  return date ? String(date).slice(0, 7) : "";
+}
+
+function enrich(moduleKey, record) {
+  const r = { ...record };
+  const s = getStudent(r.studentCode);
+  if (s) {
+    r.studentName = s.name;
+    r.parentPhone = s.parentPhone;
+    r.grade = s.grade;
+    r.subject = s.subject;
+    r.teacher = s.teacher;
+    r.group = s.group;
+    r.schedule = s.schedule;
+    r.subscription = Number(s.subscription || 0);
+  }
+
+  if (moduleKey === "payments") {
+    r.remaining = Math.max(0, Number(r.subscription || 0) - Number(r.amountPaid || 0));
+    r.paymentStatus = !Number(r.amountPaid) ? "لم يدفع" : r.remaining <= 0 ? "مدفوع بالكامل" : "دفع جزئي";
+    r.message = r.remaining <= 0
+      ? `تم استلام اشتراك الطالب / ${r.studentName || ""} لمادة ${r.subject || ""} بمبلغ ${money(r.amountPaid)} جنيه. رقم الإيصال: ${r.receiptNo || ""}`
+      : `ولي أمر الطالب / ${r.studentName || ""} المتبقي من اشتراك مادة ${r.subject || ""} هو ${money(r.remaining)} جنيه.`;
+  }
+
+  if (moduleKey === "attendance") {
+    r.message = r.status === "غائب"
+      ? `ولي أمر الطالب / ${r.studentName || ""} نحيط علم سيادتكم بأن الطالب لم يحضر حصة اليوم لمادة ${r.subject || ""} بتاريخ ${r.date || ""}. برجاء المتابعة مع إدارة السنتر.`
+      : "";
+  }
+
+  if (moduleKey === "exams") {
+    const percentage = Number(r.fullMark) ? Number(r.studentMark || 0) / Number(r.fullMark) : 0;
+    r.percentage = percentage;
+    r.level = percentage >= 0.85 ? "ممتاز" : percentage >= 0.7 ? "جيد" : percentage >= 0.5 ? "يحتاج متابعة" : "ضعيف";
+    r.message = `ولي أمر الطالب / ${r.studentName || ""} درجة الطالب في امتحان ${r.examName || ""} لمادة ${r.subject || ""} هي ${r.studentMark || 0} من ${r.fullMark || 0}. المستوى: ${r.level}`;
+  }
+
+  if (moduleKey === "homework") {
+    r.message = r.status === "لم يسلم"
+      ? `ولي أمر الطالب / ${r.studentName || ""} نحيط علم سيادتكم بأن الطالب لم يسلم واجب مادة ${r.subject || ""}. برجاء المتابعة.`
+      : "";
+  }
+
+  if (moduleKey === "complaints") {
+    r.studentName = s?.name || "";
+    r.parentPhone = s?.parentPhone || "";
+  }
+
+  if (moduleKey === "groups") {
+    r.currentStudents = state.students.filter(st => st.group === r.name && st.status === "مستمر").length;
+    const capacity = Number(r.capacity || 0);
+    r.fillRate = capacity ? r.currentStudents / capacity : 0;
+    r.groupStatus = !capacity ? "متاحة" : r.currentStudents >= capacity ? "مكتملة" : r.currentStudents >= capacity * 0.8 ? "قاربت على الاكتمال" : "متاحة";
+  }
+
+  if (moduleKey === "teachers") {
+    r.groupsCount = state.groups.filter(g => g.teacher === r.name).length;
+    r.studentsCount = state.students.filter(st => st.teacher === r.name && st.status === "مستمر").length;
+    const teacherPayments = state.payments.map(p => enrich("payments", p)).filter(p => p.teacher === r.name);
+    r.collected = teacherPayments.reduce((sum, p) => sum + Number(p.amountPaid || 0), 0);
+    const val = Number(r.payValue || 0);
+    r.teacherDue = r.paySystem === "نسبة من الاشتراك" ? r.collected * val / 100 : r.paySystem === "مبلغ لكل طالب" ? r.studentsCount * val : val;
+    r.remainingDue = Math.max(0, Number(r.teacherDue || 0) - Number(r.paid || 0));
+  }
+  return r;
+}
+
+function formatValue(key, value, record, moduleKey) {
+  if (["amount", "amountPaid", "subscription", "remaining", "collected", "teacherDue", "paid", "remainingDue"].includes(key)) return money(value);
+  if (["fillRate", "percentage"].includes(key)) return pct(value);
+  if (key === "studentCode") return studentDisplay(value);
+  if (key === "message") {
+    const msg = String(value || "");
+    if (!msg) return "";
+    const phone = record.parentPhone || getStudent(record.studentCode)?.parentPhone || "";
+    const url = whatsappUrl(phone, msg);
+    return `<div class="cell-muted">${escapeHtml(msg)}</div>${url ? `<a class="mini-btn" target="_blank" rel="noopener" href="${url}">إرسال واتساب</a>` : ""}`;
+  }
+  if (key === "status" || key === "paymentStatus" || key === "groupStatus" || key === "level" || key === "converted") {
+    return `<span class="badge ${badgeClass(value)}">${escapeHtml(value || "")}</span>`;
+  }
+  if (typeof value === "number") return String(value);
+  return escapeHtml(value || "");
+}
+
+function badgeClass(value) {
+  const v = String(value || "");
+  if (["مستمر", "حاضر", "مدفوع بالكامل", "متاحة", "ممتاز", "نشط", "نعم", "تم الحل", "سجل فعليًا"].includes(v)) return "good";
+  if (["متأخر", "دفع جزئي", "قاربت على الاكتمال", "يحتاج متابعة", "تحت المتابعة", "حجز تجربة", "حضر تجربة"].includes(v)) return "warn";
+  if (["غائب", "لم يدفع", "مكتملة", "ضعيف", "منقطع", "مفتوحة", "لا", "لم يسلم", "موقوف"].includes(v)) return "danger";
+  return "";
+}
+
+function buildNav() {
+  const nav = document.getElementById("nav");
+  nav.innerHTML = Object.entries(modules).map(([key, m]) => `
+    <button class="nav-btn ${key === currentModule ? "active" : ""}" data-module="${key}">
+      <span>${m.icon}</span><span>${m.title}</span>
+    </button>
+  `).join("");
+  nav.querySelectorAll(".nav-btn").forEach(btn => btn.addEventListener("click", () => {
+    currentModule = btn.dataset.module;
+    currentSearch = "";
+    currentFilter = "";
+    document.getElementById("sidebar").classList.remove("open");
+    render();
+  }));
+}
+
+function render() {
+  saveState();
+  buildNav();
+  const m = modules[currentModule];
+  document.getElementById("pageTitle").textContent = m.title;
+  document.getElementById("pageSubtitle").textContent = m.subtitle;
+  document.getElementById("addNewBtn").style.display = schemas[currentModule] ? "inline-flex" : "none";
+  document.getElementById("content").innerHTML = "";
+  document.getElementById("alerts").innerHTML = "";
+
+  if (currentModule === "dashboard") renderDashboard();
+  else if (currentModule === "reports") renderReports();
+  else if (currentModule === "settings") openSettings();
+  else renderModule(currentModule);
+}
+
+function stats() {
+  const today = todayISO();
+  const currentMonth = ymNow();
+  const enrichedPayments = state.payments.map(p => enrich("payments", p));
+  const enrichedAttendance = state.attendance.map(a => enrich("attendance", a));
+  const totalIncome = enrichedPayments.reduce((s, p) => s + Number(p.amountPaid || 0), 0);
+  const todayIncome = enrichedPayments.filter(p => p.date === today).reduce((s, p) => s + Number(p.amountPaid || 0), 0);
+  const monthIncome = enrichedPayments.filter(p => monthOf(p.date) === currentMonth).reduce((s, p) => s + Number(p.amountPaid || 0), 0);
+  const monthExpenses = state.expenses.filter(e => monthOf(e.date) === currentMonth).reduce((s, e) => s + Number(e.amount || 0), 0);
+  const totalRemaining = enrichedPayments.reduce((s, p) => s + Number(p.remaining || 0), 0);
+  const todayAbsent = enrichedAttendance.filter(a => a.date === today && a.status === "غائب").length;
+  return {
+    totalStudents: state.students.length,
+    activeStudents: state.students.filter(s => s.status === "مستمر").length,
+    stoppedStudents: state.students.filter(s => s.status === "منقطع").length,
+    groups: state.groups.length,
+    teachers: state.teachers.length,
+    todayLessons: todayLessonsCount(),
+    todayAbsent,
+    todayIncome,
+    monthIncome,
+    monthExpenses,
+    netProfit: monthIncome - monthExpenses,
+    totalIncome,
+    totalRemaining,
+    openComplaints: state.complaints.filter(c => c.status !== "تم الحل").length,
+    newLeads: state.leads.filter(l => l.status !== "سجل فعليًا" && l.status !== "غير مهتم").length
+  };
+}
+
+function todayLessonsCount() {
+  const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+  const day = days[new Date().getDay()];
+  return state.groups.filter(g => g.day === day).length;
+}
+
+function renderDashboard() {
+  const s = stats();
+  const content = document.getElementById("content");
+  content.innerHTML = `
+    <div class="stats-grid">
+      ${statCard("🎓", "إجمالي الطلاب", s.totalStudents)}
+      ${statCard("✅", "طلاب مستمرون", s.activeStudents)}
+      ${statCard("🗓️", "حصص اليوم", s.todayLessons)}
+      ${statCard("❌", "غياب اليوم", s.todayAbsent)}
+      ${statCard("💰", "إيرادات اليوم", money(s.todayIncome) + " ج")}
+      ${statCard("📆", "إيرادات الشهر", money(s.monthIncome) + " ج")}
+      ${statCard("🧾", "مصروفات الشهر", money(s.monthExpenses) + " ج")}
+      ${statCard("📈", "صافي الشهر", money(s.netProfit) + " ج")}
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-title"><div><h3>تنبيهات مهمة</h3><p>أهم الأشياء التي تحتاج متابعة</p></div></div>
+        <div class="list">
+          ${dashboardAlerts().map(a => `<div class="list-item"><div><strong>${a.title}</strong><small>${a.text}</small></div><span class="badge ${a.kind || ""}">${a.value}</span></div>`).join("") || `<div class="empty"><h3>لا توجد تنبيهات حاليًا</h3><p>كل شيء يبدو منظمًا.</p></div>`}
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title"><div><h3>إدخال سريع</h3><p>اختصارات لأكثر العمليات اليومية</p></div></div>
+        <div class="quick-actions">
+          <button class="secondary quick" data-module="students">طالب جديد</button>
+          <button class="secondary quick" data-module="attendance">تسجيل حضور</button>
+          <button class="secondary quick" data-module="payments">تسجيل دفع</button>
+          <button class="secondary quick" data-module="exams">درجة امتحان</button>
+          <button class="secondary quick" data-module="homework">متابعة واجب</button>
+          <button class="secondary quick" data-module="leads">متابعة طالب جديد</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-title"><div><h3>حصص اليوم</h3><p>حسب جدول المجموعات</p></div></div>
+        ${renderTodayGroups()}
+      </div>
+      <div class="card">
+        <div class="section-title"><div><h3>أحدث المدفوعات</h3><p>آخر عمليات التحصيل</p></div></div>
+        ${renderRecentPayments()}
+      </div>
+    </div>
+  `;
+  content.querySelectorAll(".quick").forEach(btn => btn.addEventListener("click", () => {
+    currentModule = btn.dataset.module;
+    render();
+    openRecordDialog(currentModule);
+  }));
+}
+
+function statCard(icon, label, value) {
+  return `<div class="card stat-card"><div><p>${label}</p><h3>${value}</h3></div><div class="stat-icon">${icon}</div></div>`;
+}
+
+function dashboardAlerts() {
+  const s = stats();
+  const duePayments = state.payments.map(p => enrich("payments", p)).filter(p => Number(p.remaining || 0) > 0).length;
+  const absentRepeated = repeatedAbsenceCount();
+  const fullGroups = state.groups.map(g => enrich("groups", g)).filter(g => g.groupStatus === "مكتملة").length;
+  return [
+    duePayments ? { title: "طلاب عليهم متبقيات", text: "راجع صفحة المدفوعات والمتأخرات", value: duePayments, kind: "danger" } : null,
+    absentRepeated ? { title: "طلاب غياب متكرر", text: "غياب 3 مرات أو أكثر", value: absentRepeated, kind: "warn" } : null,
+    s.openComplaints ? { title: "شكاوى مفتوحة", text: "تحتاج متابعة من الإدارة", value: s.openComplaints, kind: "danger" } : null,
+    fullGroups ? { title: "مجموعات مكتملة", text: "لا تضف طلابًا جددًا قبل فتح مجموعة أخرى", value: fullGroups, kind: "warn" } : null,
+    s.newLeads ? { title: "طلاب جدد تحت المتابعة", text: "تابع التحويل لتسجيل فعلي", value: s.newLeads, kind: "good" } : null
+  ].filter(Boolean);
+}
+
+function repeatedAbsenceCount() {
+  const map = {};
+  state.attendance.forEach(a => { if (a.status === "غائب") map[a.studentCode] = (map[a.studentCode] || 0) + 1; });
+  return Object.values(map).filter(n => n >= 3).length;
+}
+
+function renderTodayGroups() {
+  const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+  const day = days[new Date().getDay()];
+  const rows = state.groups.filter(g => g.day === day);
+  if (!rows.length) return `<div class="empty"><h3>لا توجد حصص اليوم</h3><p>يمكنك إضافة المجموعات من صفحة المجموعات.</p></div>`;
+  return `<div class="list">${rows.map(g => `<div class="list-item"><div><strong>${escapeHtml(g.name)}</strong><small>${escapeHtml(g.subject || "")} | ${escapeHtml(g.teacher || "")} | ${escapeHtml(g.room || "")}</small></div><span class="badge">${escapeHtml(g.time || "")}</span></div>`).join("")}</div>`;
+}
+
+function renderRecentPayments() {
+  const rows = state.payments.slice(-6).reverse().map(p => enrich("payments", p));
+  if (!rows.length) return `<div class="empty"><h3>لا توجد مدفوعات</h3><p>ابدأ بتسجيل أول عملية دفع.</p></div>`;
+  return `<div class="list">${rows.map(p => `<div class="list-item"><div><strong>${escapeHtml(p.studentName || p.studentCode)}</strong><small>${escapeHtml(p.date || "")} | ${escapeHtml(p.method || "")}</small></div><span class="badge good">${money(p.amountPaid)} ج</span></div>`).join("")}</div>`;
+}
+
+function renderModule(moduleKey) {
+  const content = document.getElementById("content");
+  const data = state[moduleKey] || [];
+  const columns = tableColumns[moduleKey] || schemas[moduleKey].map(f => f.key);
+  const enriched = data.map(r => enrich(moduleKey, r));
+  const filtered = enriched.filter(r => {
+    const text = JSON.stringify(r).toLowerCase();
+    const okSearch = !currentSearch || text.includes(currentSearch.toLowerCase());
+    const okFilter = !currentFilter || Object.values(r).includes(currentFilter);
+    return okSearch && okFilter;
+  });
+
+  content.innerHTML = `
+    <div class="toolbar">
+      <div class="filters">
+        <input class="search-input" id="searchInput" placeholder="بحث سريع في البيانات..." value="${escapeHtml(currentSearch)}" />
+        ${renderFilterSelect(moduleKey)}
+      </div>
+      <div class="filters">
+        <button class="secondary" id="exportCsvBtn">تصدير CSV</button>
+        <button class="secondary" id="clearSearchBtn">مسح البحث</button>
+      </div>
+    </div>
+    ${filtered.length ? `
+      <div class="table-card"><div class="table-wrap"><table>
+        <thead><tr>${columns.map(c => `<th>${labels[c] || c}</th>`).join("")}<th>إجراءات</th></tr></thead>
+        <tbody>${filtered.map(r => `<tr>${columns.map(c => `<td>${formatValue(c, r[c], r, moduleKey)}</td>`).join("")}<td class="actions-cell"><button class="mini-btn edit-btn" data-id="${r.id}">تعديل</button><button class="mini-btn mini-danger delete-btn" data-id="${r.id}">حذف</button></td></tr>`).join("")}</tbody>
+      </table></div></div>
+    ` : document.getElementById("emptyTemplate").innerHTML}
+  `;
+
+  document.getElementById("searchInput").addEventListener("input", e => { currentSearch = e.target.value; renderModule(moduleKey); });
+  const filterSelect = document.getElementById("filterSelect");
+  if (filterSelect) filterSelect.addEventListener("change", e => { currentFilter = e.target.value; renderModule(moduleKey); });
+  document.getElementById("clearSearchBtn").addEventListener("click", () => { currentSearch = ""; currentFilter = ""; renderModule(moduleKey); });
+  document.getElementById("exportCsvBtn").addEventListener("click", () => exportCsv(moduleKey, filtered));
+  content.querySelectorAll(".edit-btn").forEach(btn => btn.addEventListener("click", () => openRecordDialog(moduleKey, btn.dataset.id)));
+  content.querySelectorAll(".delete-btn").forEach(btn => btn.addEventListener("click", () => deleteRecord(moduleKey, btn.dataset.id)));
+}
+
+function renderFilterSelect(moduleKey) {
+  const candidates = ["status", "grade", "subject", "teacher", "method", "category", "role", "source", "converted", "paymentStatus", "groupStatus", "level"];
+  const data = (state[moduleKey] || []).map(r => enrich(moduleKey, r));
+  const values = [...new Set(data.flatMap(r => candidates.map(k => r[k]).filter(Boolean)))].slice(0, 80);
+  if (!values.length) return "";
+  return `<select class="filter-select" id="filterSelect"><option value="">كل الفلاتر</option>${values.map(v => `<option value="${escapeHtml(v)}" ${currentFilter === v ? "selected" : ""}>${escapeHtml(v)}</option>`).join("")}</select>`;
+}
+
+function openRecordDialog(moduleKey, id = null) {
+  if (!schemas[moduleKey]) return;
+  editing = { module: moduleKey, id };
+  const dialog = document.getElementById("recordDialog");
+  const title = document.getElementById("dialogTitle");
+  const fields = document.getElementById("formFields");
+  const existing = id ? state[moduleKey].find(r => r.id === id) : null;
+  title.textContent = `${id ? "تعديل" : "إضافة"} ${modules[moduleKey].title}`;
+  document.getElementById("dialogHint").textContent = "الحقول المرتبطة بالطالب يتم حسابها في الجدول تلقائيًا.";
+  fields.innerHTML = schemas[moduleKey].map(field => renderField(moduleKey, field, existing)).join("");
+  dialog.showModal();
+}
+
+function renderField(moduleKey, field, existing) {
+  const value = existing?.[field.key] ?? field.default ?? (field.defaultToday ? todayISO() : field.type === "month" ? ymNow() : field.type === "auto" ? (existing?.[field.key] || generateCode(moduleKey)) : "");
+  const required = field.required ? "required" : "";
+  const readonly = field.readonly ? "readonly" : "";
+  const cls = field.full || field.type === "textarea" ? "form-field full-field" : "form-field";
+  const placeholder = field.placeholder ? `placeholder="${escapeHtml(field.placeholder)}"` : "";
+  let input = "";
+
+  if (field.type === "textarea") {
+    input = `<textarea name="${field.key}" ${required} ${placeholder}>${escapeHtml(value)}</textarea>`;
+  } else if (["select", "student", "teacher", "group", "room", "staff"].includes(field.type)) {
+    input = `<select name="${field.key}" ${required}>${selectOptions(field, value)}</select>`;
+  } else {
+    const type = field.type === "auto" ? "text" : field.type;
+    input = `<input name="${field.key}" type="${type}" value="${escapeHtml(value)}" ${required} ${readonly} ${placeholder} />`;
+  }
+
+  return `<div class="${cls}"><label>${field.label}${field.required ? " *" : ""}</label>${input}</div>`;
+}
+
+function selectOptions(field, value) {
+  let options = [];
+  if (field.type === "student") options = state.students.map(s => ({ value: s.code, label: `${s.name} — ${s.code}` }));
+  else if (field.type === "teacher") options = state.teachers.map(t => ({ value: t.name, label: t.name }));
+  else if (field.type === "group") options = state.groups.map(g => ({ value: g.name, label: `${g.name}${g.subject ? " — " + g.subject : ""}` }));
+  else if (field.type === "room") options = state.rooms.map(r => ({ value: r.name, label: r.name }));
+  else if (field.type === "staff") options = state.staff.map(s => ({ value: s.name, label: s.name }));
+  else options = (field.options ? field.options() : []).map(x => ({ value: x, label: x }));
+  return `<option value="">اختر...</option>` + options.map(o => `<option value="${escapeHtml(o.value)}" ${String(value) === String(o.value) ? "selected" : ""}>${escapeHtml(o.label)}</option>`).join("");
+}
+
+function submitRecord(event) {
+  event.preventDefault();
+  const { module, id } = editing;
+  const form = event.currentTarget;
+  const formData = new FormData(form);
+  const record = {};
+  schemas[module].forEach(field => {
+    const raw = formData.get(field.key);
+    record[field.key] = field.type === "number" ? Number(raw || 0) : String(raw || "").trim();
+  });
+  const codeField = modules[module].codeField;
+  if (codeField && !record[codeField]) record[codeField] = generateCode(module);
+
+  if (id) {
+    const idx = state[module].findIndex(r => r.id === id);
+    state[module][idx] = { ...state[module][idx], ...record };
+  } else {
+    state[module].push({ id: uid(), ...record });
+  }
+  document.getElementById("recordDialog").close();
+  render();
+}
+
+function deleteRecord(moduleKey, id) {
+  if (!confirm("هل تريد حذف هذا السجل؟")) return;
+  state[moduleKey] = state[moduleKey].filter(r => r.id !== id);
+  render();
+}
+
+function renderReports() {
+  const s = stats();
+  const content = document.getElementById("content");
+  const teachers = state.teachers.map(t => enrich("teachers", t)).sort((a,b) => Number(b.studentsCount || 0) - Number(a.studentsCount || 0)).slice(0, 6);
+  const weak = state.exams.map(e => enrich("exams", e)).filter(e => e.level === "ضعيف" || e.level === "يحتاج متابعة").slice(-8).reverse();
+  const due = state.payments.map(p => enrich("payments", p)).filter(p => Number(p.remaining || 0) > 0).slice(-8).reverse();
+
+  content.innerHTML = `
+    <div class="report-grid">
+      ${statCard("🎓", "إجمالي الطلاب", s.totalStudents)}
+      ${statCard("✅", "المستمرون", s.activeStudents)}
+      ${statCard("🚪", "المنقطعون", s.stoppedStudents)}
+      ${statCard("💰", "إجمالي الإيرادات", money(s.totalIncome) + " ج")}
+      ${statCard("⏳", "إجمالي المتأخرات", money(s.totalRemaining) + " ج")}
+      ${statCard("📈", "صافي الشهر", money(s.netProfit) + " ج")}
+    </div>
+    <div class="two-col">
+      <div class="card"><div class="section-title"><div><h3>أداء المدرسين</h3><p>حسب عدد الطلاب والتحصيل</p></div></div>${miniReport(teachers, ["name", "studentsCount", "collected", "teacherDue"])}</div>
+      <div class="card"><div class="section-title"><div><h3>متأخرات الدفع</h3><p>طلاب عليهم مبالغ متبقية</p></div></div>${miniReport(due, ["studentName", "subject", "remaining", "paymentStatus"])}</div>
+    </div>
+    <div class="card"><div class="section-title"><div><h3>طلاب يحتاجون متابعة تعليمية</h3><p>من نتائج الامتحانات</p></div></div>${miniReport(weak, ["studentName", "examName", "subject", "percentage", "level"])}</div>
+  `;
+}
+
+function miniReport(rows, columns) {
+  if (!rows.length) return `<div class="empty"><h3>لا توجد بيانات كافية</h3><p>أدخل بيانات أكثر لتظهر التقارير.</p></div>`;
+  return `<div class="table-wrap"><table><thead><tr>${columns.map(c => `<th>${labels[c] || c}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${columns.map(c => `<td>${formatValue(c, r[c], r)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+
+function openSettings() {
+  const dialog = document.getElementById("settingsDialog");
+  const box = document.getElementById("settingsFields");
+  box.innerHTML = `
+    <div class="setting-box"><label>اسم السنتر</label><input name="centerName" value="${escapeHtml(state.settings.centerName || "")}" /></div>
+    <div class="setting-box"><label>رقم السنتر</label><input name="centerPhone" value="${escapeHtml(state.settings.centerPhone || "")}" /></div>
+    <div class="setting-box"><label>كود قاعدة بيانات السنتر Center ID</label><input name="centerId" value="${escapeHtml(getCenterId())}" placeholder="vision-main" /></div>
+    <div class="setting-box"><label>رابط السيرفر API</label><input name="apiBaseUrl" value="${escapeHtml(getApiBaseUrl())}" placeholder="https://your-backend.deno.dev" /></div>
+    <div class="setting-box"><label>أيقونة السايدبار / رابط صورة</label><input name="sidebarIcon" value="${escapeHtml(state.settings.sidebarIcon || "")}" placeholder="🎯 أو رابط صورة" /></div>
+    <div class="setting-box"><label>رفع صورة أيقونة السايدبار</label><input name="sidebarIconFile" type="file" accept="image/*" /><small>اختياري: لو رفعت صورة سيتم حفظها كأيقونة داخل الإعدادات.</small></div>
+    ${[
+      ["grades", "الصفوف"], ["subjects", "المواد"], ["studentStatuses", "حالات الطلاب"], ["attendanceStatuses", "حالات الحضور"],
+      ["paymentMethods", "طرق الدفع"], ["expenseCategories", "بنود المصروفات"], ["roles", "الصلاحيات"], ["sources", "مصادر الطلاب"],
+      ["leadStatuses", "حالات متابعة الطلاب الجدد"], ["complaintStatuses", "حالات الشكاوى"], ["homeworkStatuses", "حالات الواجب"], ["roomStatuses", "حالات القاعات"]
+    ].map(([key, label]) => `<div class="setting-box"><label>${label}</label><textarea name="${key}">${escapeHtml((state.settings[key] || []).join("\n"))}</textarea></div>`).join("")}
+  `;
+  dialog.showModal();
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submitSettings(event) {
+  event.preventDefault();
+  const fd = new FormData(event.currentTarget);
+  for (const [key, value] of fd.entries()) {
+    if (key === "sidebarIconFile") continue;
+    if (["centerName", "centerPhone", "centerId", "apiBaseUrl", "sidebarIcon"].includes(key)) state.settings[key] = String(value).trim();
+    else state.settings[key] = String(value).split(/\n/).map(x => x.trim()).filter(Boolean);
+  }
+  const iconFile = fd.get("sidebarIconFile");
+  if (iconFile && iconFile.size) state.settings.sidebarIcon = await fileToDataUrl(iconFile);
+  localStorage.setItem("centerApiBaseUrl", state.settings.apiBaseUrl || ENV_API_BASE_URL || "");
+  localStorage.setItem("centerId", state.settings.centerId || ENV_CENTER_ID || "vision-main");
+  document.getElementById("settingsDialog").close();
+  currentModule = "dashboard";
+  render();
+}
+
+function exportCsv(moduleKey, rows) {
+  const columns = tableColumns[moduleKey] || schemas[moduleKey].map(f => f.key);
+  const csv = [columns.map(c => labels[c] || c).join(",")].concat(rows.map(r => columns.map(c => csvCell(String(r[c] ?? ""))).join(","))).join("\n");
+  downloadBlob(`center-${moduleKey}.csv`, csv, "text/csv;charset=utf-8");
+}
+
+function csvCell(value) {
+  const v = value.replace(/"/g, '""');
+  return `"${v}"`;
+}
+
+function exportAll() {
+  downloadBlob(`center-backup-${todayISO()}.json`, JSON.stringify(state, null, 2), "application/json");
+}
+
+function downloadBlob(filename, content, type) {
+  const blob = new Blob(["\ufeff" + content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importAll(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      if (!imported || typeof imported !== "object") throw new Error("Invalid file");
+      state = { ...freshState(), ...imported, settings: { ...defaultSettings, ...(imported.settings || {}) } };
+      saveState();
+      alert("تم استيراد النسخة بنجاح");
+      render();
+    } catch (e) {
+      alert("ملف غير صالح. تأكد أنه ملف النسخة الاحتياطية JSON.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetAll() {
+  if (!confirm("سيتم مسح كل بيانات الموقع من هذا المتصفح. هل أنت متأكد؟")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = freshState();
+  document.getElementById("settingsDialog").close();
+  currentModule = "dashboard";
+  render();
+}
+
+async function init() {
+  await loadRemoteState();
+  remoteReady = true;
+  saveState();
+  document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
+  document.getElementById("addNewBtn").addEventListener("click", () => openRecordDialog(currentModule));
+  document.getElementById("recordForm").addEventListener("submit", submitRecord);
+  document.getElementById("cancelBtn").addEventListener("click", () => document.getElementById("recordDialog").close());
+  document.getElementById("closeDialogBtn").addEventListener("click", () => document.getElementById("recordDialog").close());
+  document.getElementById("settingsForm").addEventListener("submit", submitSettings);
+  document.getElementById("closeSettingsBtn").addEventListener("click", () => { document.getElementById("settingsDialog").close(); currentModule = "dashboard"; render(); });
+  document.getElementById("resetDemoBtn").addEventListener("click", resetAll);
+  document.getElementById("exportAllBtn").addEventListener("click", exportAll);
+  document.getElementById("importFile").addEventListener("change", e => importAll(e.target.files[0]));
+  document.getElementById("printBtn").addEventListener("click", () => window.print());
+  render();
+}
+
+init();
+
+  </script>
+</body>
+</html>
