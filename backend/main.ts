@@ -65,13 +65,16 @@ const app = new Hono();
 
 app.use("*", cors({
   origin: (origin) => {
-    if (!origin || ALLOWED_ORIGINS.includes("*")) return origin || "*";
-    return ALLOWED_ORIGINS.includes(origin) ? origin : "";
+    if (!origin) return "*";
+    if (ALLOWED_ORIGINS.includes("*")) return origin;
+    return ALLOWED_ORIGINS.includes(origin) ? origin : undefined;
   },
   allowHeaders: ["Content-Type", "Authorization"],
   allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   credentials: true,
 }));
+
+app.options("*", (c) => c.text("OK"));
 
 app.get("/", (c) => c.json({ ok: true, app: "Vision Center Backend", docs: "/api/health" }));
 
